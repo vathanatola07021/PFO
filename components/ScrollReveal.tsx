@@ -1,0 +1,35 @@
+'use client';
+
+import { useEffect } from 'react';
+
+export default function ScrollReveal() {
+  useEffect(() => {
+    const rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('in');
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+
+    document.querySelectorAll('.rv').forEach((el) => {
+      if (rm) {
+        el.classList.add('in');
+      } else {
+        io.observe(el);
+      }
+    });
+
+    return () => {
+      io.disconnect();
+    };
+  }, []);
+
+  return null;
+}
