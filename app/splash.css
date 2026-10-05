@@ -13,19 +13,68 @@
   background-color: #070b14;
   color: #e9eef6;
   font-family: 'Poppins', 'Plus Jakarta Sans', system-ui, sans-serif;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   user-select: none;
   -webkit-user-select: none;
   opacity: 1;
   visibility: visible;
-  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.65s;
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.65s;
+}
+
+/* ==========================================================================
+   Futuristic Sci-Fi Circular Wipe Transition
+   ========================================================================== */
+#splash-screen.circle-wiping {
+  mask-image: radial-gradient(circle at 50% 50%, transparent var(--wipe-pct, 0%), black calc(var(--wipe-pct, 0%) + 1.5%));
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, transparent var(--wipe-pct, 0%), black calc(var(--wipe-pct, 0%) + 1.5%));
+  pointer-events: none;
+  transition: opacity 0.8s ease;
 }
 
 #splash-screen.dismissed {
   opacity: 0;
   visibility: hidden;
-  transform: scale(1.04);
   pointer-events: none;
+  display: none !important;
+}
+
+/* Expanding Holographic Shockwave Ring during Circle Wipe */
+.splash-circle-wipe {
+  position: fixed;
+  inset: 0;
+  z-index: 1000000;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wipe-shockwave-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.wipe-shockwave-ring.outer {
+  width: 140px;
+  height: 140px;
+  border: 4px solid #3fe0ff;
+  box-shadow: 
+    0 0 40px #3fe0ff,
+    0 0 90px rgba(63, 224, 255, 0.75),
+    inset 0 0 35px rgba(63, 224, 255, 0.5);
+}
+
+.wipe-shockwave-ring.inner {
+  width: 90px;
+  height: 90px;
+  border: 2px solid #8b7bff;
+  box-shadow: 0 0 30px #8b7bff, inset 0 0 20px #8b7bff;
 }
 
 /* Background 3D Three.js WebGL Canvas */
@@ -571,7 +620,7 @@
 
 @media (max-width: 480px) {
   .splash-container {
-    padding: 14px;
+    padding: calc(60px + env(safe-area-inset-top, 0px)) 16px calc(60px + env(safe-area-inset-bottom, 0px));
   }
   .splash-init-card {
     padding: 14px 14px;
@@ -587,5 +636,75 @@
   }
   .splash-bottom-telemetry .splash-hud-meta-right {
     display: none;
+  }
+  .splash-action-area {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+  .splash-enter-btn, .splash-skip-btn {
+    width: 100%;
+    padding: 11px 16px;
+  }
+}
+
+@media (max-width: 360px) {
+  .splash-brand-title {
+    font-size: 1.6rem;
+  }
+  .splash-brand-subtitle {
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+  }
+  .splash-init-card {
+    padding: 12px 10px;
+  }
+  .splash-progress-percent {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-height: 640px) {
+  .splash-container {
+    padding-top: calc(50px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(50px + env(safe-area-inset-bottom, 0px));
+    min-height: 100svh;
+    height: auto;
+  }
+  .splash-emblem-wrapper {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 8px;
+  }
+  .splash-emblem-core {
+    width: 40px;
+    height: 40px;
+  }
+  .splash-emblem-core svg {
+    width: 20px;
+    height: 20px;
+  }
+  .splash-brand-title {
+    font-size: 1.5rem;
+    margin-bottom: 2px;
+  }
+  .splash-brand-subtitle {
+    font-size: 0.68rem;
+    margin-bottom: 12px;
+  }
+  .splash-init-card {
+    padding: 10px 16px;
+    border-radius: 12px;
+  }
+  .splash-top-telemetry, .splash-bottom-telemetry {
+    font-size: 0.62rem;
+  }
+  .splash-action-area {
+    margin-top: 10px;
+    gap: 8px;
+  }
+  .splash-enter-btn, .splash-skip-btn {
+    padding: 8px 14px;
+    font-size: 0.75rem;
   }
 }

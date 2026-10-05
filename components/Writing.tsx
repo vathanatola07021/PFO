@@ -30,7 +30,6 @@ export default function Writing({ profile, articles }: WritingProps) {
           <a
             key={article.id}
             className="card post w2 rv in"
-            style={{ gridColumn: 'span 2' }}
             href={article.url}
           >
             <span className="meta">{article.metaInfo}</span>

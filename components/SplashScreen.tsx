@@ -26,6 +26,8 @@ export default function SplashScreen({ profile }: SplashScreenProps) {
   const [logText, setLogText] = useState(LOG_MESSAGES[0]);
   const [isReady, setIsReady] = useState(false);
   const [flashActive, setFlashActive] = useState(false);
+  const [circleWipeActive, setCircleWipeActive] = useState(false);
+  const [wipeProgress, setWipeProgress] = useState(0);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const hasLaunchedRef = useRef(false);
@@ -33,7 +35,7 @@ export default function SplashScreen({ profile }: SplashScreenProps) {
   const progressRafRef = useRef<number | null>(null);
   const animFrameIdRef = useRef<number | null>(null);
 
-  // Trigger launch transition into main portfolio workspace
+  // Trigger launch transition into main portfolio workspace via Futuristic Circle Wipe
   const triggerLaunch = () => {
     if (hasLaunchedRef.current) return;
     hasLaunchedRef.current = true;
@@ -43,25 +45,35 @@ export default function SplashScreen({ profile }: SplashScreenProps) {
       progressRafRef.current = null;
     }
 
-    setFlashActive(true);
+    setCircleWipeActive(true);
 
-    setTimeout(() => {
-      setIsDismissed(true);
-      document.body.style.overflow = '';
+    const DURATION = 900;
+    const startTime = performance.now();
 
-      setTimeout(() => {
-        setFlashActive(false);
-        setIsVisible(false);
+    const animateWipe = (now: number) => {
+      const elapsed = now - startTime;
+      const t = Math.min(1, elapsed / DURATION);
+      // Smooth cubic-bezier ease out (0.16, 1, 0.3, 1)
+      const ease = 1 - Math.pow(1 - t, 3);
+      setWipeProgress(ease * 150);
 
-        // Cancel splash WebGL render loop
-        if (animFrameIdRef.current) {
-          cancelAnimationFrame(animFrameIdRef.current);
-          animFrameIdRef.current = null;
-        }
+      if (t < 1) {
+        requestAnimationFrame(animateWipe);
+      } else {
+        setIsDismissed(true);
+        document.body.style.overflow = '';
+        setTimeout(() => {
+          setIsVisible(false);
+          if (animFrameIdRef.current) {
+            cancelAnimationFrame(animFrameIdRef.current);
+            animFrameIdRef.current = null;
+          }
+          window.dispatchEvent(new CustomEvent('splashComplete'));
+        }, 150);
+      }
+    };
 
-        window.dispatchEvent(new CustomEvent('splashComplete'));
-      }, 350);
-    }, 280);
+    requestAnimationFrame(animateWipe);
   };
 
   const updateProgress = (val: number) => {
@@ -85,6 +97,8 @@ export default function SplashScreen({ profile }: SplashScreenProps) {
     setIsDismissed(false);
     setIsVisible(true);
     setIsReady(false);
+    setCircleWipeActive(false);
+    setWipeProgress(0);
     setStatusText("INITIALIZING THREE.JS WEBGL ENGINE...");
     document.body.style.overflow = 'hidden';
 
@@ -374,8 +388,11 @@ export default function SplashScreen({ profile }: SplashScreenProps) {
     <>
       <aside
         id="splash-screen"
-        className={isDismissed ? 'dismissed' : ''}
-        style={isDismissed ? { display: 'none' } : undefined}
+        className={`${isDismissed ? 'dismissed' : ''} ${circleWipeActive ? 'circle-wiping' : ''}`}
+        style={{
+          display: isDismissed ? 'none' : undefined,
+          ['--wipe-pct' as any]: `${wipeProgress}%`
+        }}
         aria-label="System Initialization Splash Screen"
       >
         <canvas id="splash-webgl" ref={canvasRef} aria-label="3D Quantum Core background" />
@@ -516,6 +533,26 @@ export default function SplashScreen({ profile }: SplashScreenProps) {
           </div>
         </footer>
       </aside>
+
+      {/* Futuristic Expanding Circle Wipe Shockwave Portal */}
+      {circleWipeActive && (
+        <div id="splash-circle-wipe-portal" className="splash-circle-wipe wiping" aria-hidden="true">
+          <div
+            className="wipe-shockwave-ring outer"
+            style={{
+              transform: `translate(-50%, -50%) scale(${Math.max(0.05, (wipeProgress / 100) * 26)})`,
+              opacity: Math.max(0, 1 - (wipeProgress / 140))
+            }}
+          />
+          <div
+            className="wipe-shockwave-ring inner"
+            style={{
+              transform: `translate(-50%, -50%) scale(${Math.max(0.02, (wipeProgress / 100) * 22)})`,
+              opacity: Math.max(0, 1 - (wipeProgress / 130))
+            }}
+          />
+        </div>
+      )}
 
       <div
         id="splash-flash-curtain"

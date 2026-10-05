@@ -60,8 +60,27 @@ export default function Navbar({ profile }: NavbarProps) {
   return (
     <>
       <nav aria-label="Main Navigation">
-        <a className="mark" href="#top" aria-label={`${profile.fullName}, top of page`}>
-          {profile.fullName}
+        <a className="nav-brand-logo" href="#top" aria-label={`${profile.fullName} Logo, Back to top`} title={`${profile.fullName} Portfolio`}>
+          <span className="brand-logo-emblem">
+            <svg viewBox="0 0 36 36" width="34" height="34" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="navEmblemGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#3fe0ff" />
+                  <stop offset="50%" stopColor="#8b7bff" />
+                  <stop offset="100%" stopColor="#ff7bcf" />
+                </linearGradient>
+                <linearGradient id="emblemCoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="rgba(63, 224, 255, 0.2)" />
+                  <stop offset="100%" stopColor="rgba(139, 123, 255, 0.08)" />
+                </linearGradient>
+              </defs>
+              <polygon points="18,2 33,10.5 33,25.5 18,34 3,25.5 3,10.5" stroke="url(#navEmblemGrad)" strokeWidth="2.2" fill="rgba(8, 14, 26, 0.95)" />
+              <polygon points="18,7.5 28,13 28,23 18,28.5 8,23 8,13" stroke="rgba(63, 224, 255, 0.45)" strokeWidth="1.2" fill="url(#emblemCoreGrad)" />
+              <path d="M12.5 13.5v9h5.5" stroke="url(#navEmblemGrad)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M18.5 13.5l3.5 9 3.5-9" stroke="#3fe0ff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="18" cy="18" r="2" fill="#3fe0ff" />
+            </svg>
+          </span>
         </a>
 
         <div className="links">
@@ -77,7 +96,7 @@ export default function Navbar({ profile }: NavbarProps) {
         </div>
 
         <div className="nav-right-actions">
-          <a className="pill" href="#contact">
+          <a className="pill nav-pill-btn" href="#contact">
             Get in touch
           </a>
           <button
